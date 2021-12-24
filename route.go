@@ -2,56 +2,40 @@ package main
 
 import (
 	"encoding/json"
+	"math/rand"
 	"net/http"
-)
 
-type Post struct {
-	Id    int    `json:"id"`
-	Title string `json:"title"`
-	Text  string `json:"text"`
-}
+	"../entity"
+	"./entity"
+	"./repository"
+)
 
 var (
-	posts []Post
+	repo repository.PostRepository = repository.NewPostRepository()
 )
-
-func init() {
-	posts = []Post{Post{
-		Id:    1,
-		Title: "Title 1",
-		Text:  "Text 1",
-	}}
-}
 
 func getPosts(resp http.ResponseWriter, request *http.Request) {
 	resp.Header().Set("Content-Type", "Application/json")
-	result, err := json.Marshal(posts)
+	posts, err := repo.FindAll()
 	if err != nil {
 		resp.WriteHeader(http.StatusInternalServerError)
-		resp.Write([]byte(`{"error": "Error marshalling the posts array"}`))
+		resp.Write([]byte(`{"error": "Error fetching the posts array"}`))
 		return
 	}
 	resp.WriteHeader(http.StatusOK)
-	resp.Write(result)
-
+	json.NewEncoder(resp).Encode(posts)
 }
 
 func addPost(resp http.ResponseWriter, req *http.Request) {
-	var post Post
+	var post entity.Post
 	err := json.NewDecoder(req.Body).Decode(&post)
 	if err != nil {
 		resp.WriteHeader(http.StatusInternalServerError)
-		resp.Write([]byte(`{"error": "Error unmarshalling the posts array"}`))
+		resp.Write([]byte(`{"error": "Error unmarshalling the request"}`))
 		return
 	}
-	post.Id = len(posts) + 1
-	posts = append(posts, post)
+	post.Id = rand.Int()
+	repo.Save(&post)
 	resp.WriteHeader(http.StatusOK)
-	result, err := json.Marshal(post)
-	if err != nil {
-		resp.WriteHeader(http.StatusInternalServerError)
-		resp.Write([]byte(`{"error": "Error unmarshalling the posts array"}`))
-		return
-	}
-	resp.Write(result)
+	json.NewEncoder(resp).Encode(post)
 }
