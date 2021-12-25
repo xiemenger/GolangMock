@@ -1,0 +1,8 @@
+Golang Clean Architecture Fundamentals:
+1. Independent of frameworks
+2. Testable
+3. Independent of UI
+4. Independent of database
+5. Independent of any external agency.
+
+The Application business logica can be test without the database, UI, or any extenral angency.
