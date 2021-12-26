@@ -4,7 +4,8 @@ import (
 	"context"
 	"log"
 
-	"../entity"
+	"github.com/xiemenger/GolangMock/entity"
+
 	"cloud.google.com/go/firestore"
 )
 

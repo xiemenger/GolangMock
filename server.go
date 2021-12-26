@@ -2,22 +2,22 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 
-	"github.com/gorilla/mux"
+	router "github.com/xiemenger/GolangMock/http"
+)
+
+var (
+	httpRouter router.Router = router.NewMuxRouter()
 )
 
 func main() {
-	router := mux.NewRouter()
 	const port string = ":8080"
-	router.HandleFunc("/", func(resp http.ResponseWriter, request *http.Request) {
+	httpRouter.GET("/", func(resp http.ResponseWriter, request *http.Request) {
 		fmt.Fprintln(resp, "Up and running.....")
 	})
-
-	router.HandleFunc("/posts", getPosts).Methods("GET")
-	router.HandleFunc("/posts", addPost).Methods("POST")
-	log.Println("Server listening the port: ", port)
-	log.Fatalln(http.ListenAndServe(port, router))
+	httpRouter.GET("/posts", getPosts)
+	httpRouter.POST("/posts", addPost)
+	httpRouter.SERVE(port)
 
 }

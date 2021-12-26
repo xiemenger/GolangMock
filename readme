@@ -6,3 +6,6 @@ Golang Clean Architecture Fundamentals:
 5. Independent of any external agency.
 
 The Application business logica can be test without the database, UI, or any extenral angency.
+
+
+Controller -> service -> Database/Repository
